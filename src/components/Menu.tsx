@@ -44,10 +44,10 @@ const Menu: FC<MenuProps> = ({ isFileTreeOpen, openCloseFileTree }) => {
   ];
 
   return (
-    <aside className="h-full w-9 bg-white/90 flex flex-col justify-between border-r border-r-zinc-300">
+    <aside className="h-full w-9 bg-white/75 flex flex-col justify-between border-r ">
       <div>
         <button
-          className={`w-full p-2 flex justify-center hover:bg-zinc-300/75 group ${
+          className={`w-full p-2 flex justify-center hover:bg-zinc-100/90 group ${
             isFileTreeOpen ? "bg-zinc-300/75" : ""
           }`}
           onClick={openCloseFileTree}

@@ -1,6 +1,10 @@
+import FileExplorer from "../components/FileExplorer"
+
 const Anotacoes = () => {
   return (
-    <div>Anotacoes</div>
+    <div>
+      <FileExplorer />
+    </div>
   )
 }
 
