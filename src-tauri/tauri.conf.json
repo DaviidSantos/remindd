@@ -22,6 +22,13 @@
         "unmaximize": true,
         "unminimize": true,
         "startDragging": true
+      },
+      "shell": {
+        "all": false,
+        "execute": false,
+        "open": true,
+        "scope": [],
+        "sidecar": false
       }
     },
     "bundle": {

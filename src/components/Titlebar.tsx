@@ -25,7 +25,7 @@ const Titlebar = () => {
     return (
       <div
         data-tauri-drag-region
-        className="w-full flex items-center justify-between bg-white border-b"
+        className="w-full flex items-center justify-between bg-zinc-50 border-b pl-2"
       >
         <div className="flex items-center gap-3">
           <svg

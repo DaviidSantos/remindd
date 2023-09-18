@@ -44,7 +44,7 @@ const Menu: FC<MenuProps> = ({ isFileTreeOpen, openCloseFileTree }) => {
   ];
 
   return (
-    <aside className="h-full w-9 bg-white/75 flex flex-col justify-between border-r ">
+    <aside className="h-full w-9 bg-white/95 flex flex-col justify-between border-r ">
       <div>
         <button
           className={`w-full p-2 flex justify-center hover:bg-zinc-100/90 group ${
