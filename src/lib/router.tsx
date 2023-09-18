@@ -1,16 +1,16 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
-import Anotacoes from "../pages/Anotacoes";
+import Notes from "../pages/Notes";
 
 export const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <App />,
-        children: [
-            {
-                path: "",
-                element: <Anotacoes />
-            }
-        ]
-    }
-])
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "",
+        element: <Notes />,
+      },
+    ],
+  },
+]);
