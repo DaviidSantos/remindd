@@ -29,6 +29,19 @@
         "open": true,
         "scope": [],
         "sidecar": false
+      },
+      "fs": {
+        "all": false,
+        "copyFile": false,
+        "createDir": true,
+        "exists": true,
+        "readDir": true,
+        "readFile": true,
+        "removeDir": true,
+        "removeFile": true,
+        "renameFile": true,
+        "scope": ["$DOCUMENT/**"],
+        "writeFile": true
       }
     },
     "bundle": {

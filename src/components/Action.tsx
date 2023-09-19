@@ -1,5 +1,6 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { IconType } from "react-icons";
+import { useFileTreeContext } from "../context/FileTreeContext";
 
 interface ActionProps {
   icon: IconType;
@@ -9,8 +10,10 @@ interface ActionProps {
   errorMessage: string;
   action: (
     setIsOpen: (isOpen: boolean) => void,
-    setIsError: (isError: boolean) => void
-  ) => void;
+    setIsError: (isError: boolean) => void,
+    input: string | undefined,
+    currentNode: string
+  ) => Promise<void>;
 }
 
 const Action: FC<ActionProps> = ({
@@ -23,6 +26,9 @@ const Action: FC<ActionProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isError, setIsError] = useState(false);
+  const { currentNode, readFileTree } = useFileTreeContext();
+
+  const [input, setInput] = useState<string | undefined>();
   const componentRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -31,6 +37,7 @@ const Action: FC<ActionProps> = ({
         componentRef.current &&
         !componentRef.current.contains(e.target as Node | null)
       ) {
+        setIsError(false);
         setIsOpen(false);
       }
     }
@@ -42,9 +49,10 @@ const Action: FC<ActionProps> = ({
     };
   }, []);
 
-  const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const formSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    action(setIsOpen, setIsError);
+    await action(setIsOpen, setIsError, input, currentNode!);
+    readFileTree();
   };
 
   return (
@@ -65,6 +73,7 @@ const Action: FC<ActionProps> = ({
           <form className="flex flex-col gap-4" onSubmit={formSubmit}>
             <div className="relative">
               <input
+                onChange={(e) => setInput(e.currentTarget.value)}
                 type="text"
                 autoFocus={true}
                 placeholder={placeholder}

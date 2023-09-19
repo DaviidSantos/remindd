@@ -1,5 +1,4 @@
 import { writeTextFile, BaseDirectory } from "@tauri-apps/api/fs";
-import { useFileTreeContext } from "../context/FileTreeContext";
 
 export const getNodeName = (filePath: string) => {
   if (!filePath) {
@@ -34,20 +33,16 @@ const extractFolderPath = (input: string): string => {
 
 export const createNote = async (
   setIsOpen: (isOpen: boolean) => void,
-  setIsError: (isError: boolean) => void
+  setIsError: (isError: boolean) => void,
+  title: string | undefined,
+  currentNode: string
 ) => {
-  const input = document.querySelector("#input") as HTMLInputElement;
-  const title = input.value;
-
-  const { currentNode, readFileTree } = useFileTreeContext();
-  const folderPath = extractFolderPath(currentNode!);
-  const path = getPath(folderPath) + `\\${title}.md`;
+  const filePath = extractFolderPath(currentNode);
+  const path = getPath(filePath) + `\\${title}.md`;
   await writeTextFile(`${path}`, "", {
     dir: BaseDirectory.Document,
   })
     .then(() => {
-      readFileTree();
-      input.value = "";
       setIsOpen(false);
     })
     .catch(() => {

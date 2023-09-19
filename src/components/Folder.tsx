@@ -37,7 +37,7 @@ const Folder: FC<FolderProps> = ({ path, children }) => {
       </button>
       {children && (
         <div
-          className={`border-l border-l-white pl-3 ml-3 mt-1 ${
+          className={`border-l border-l-zinc-200 pl-3 ml-3 mt-1 ${
             isOpen ? "flex flex-col gap-2" : "hidden"
           }`}
         >
