@@ -1,4 +1,4 @@
-import { writeTextFile, BaseDirectory } from "@tauri-apps/api/fs";
+import { writeTextFile, BaseDirectory, createDir } from "@tauri-apps/api/fs";
 
 export const getNodeName = (filePath: string) => {
   if (!filePath) {
@@ -40,6 +40,25 @@ export const createNote = async (
   const filePath = extractFolderPath(currentNode);
   const path = getPath(filePath) + `\\${title}.md`;
   await writeTextFile(`${path}`, "", {
+    dir: BaseDirectory.Document,
+  })
+    .then(() => {
+      setIsOpen(false);
+    })
+    .catch(() => {
+      setIsError(true);
+    });
+};
+
+export const createFolder = async (
+  setIsOpen: (isOpen: boolean) => void,
+  setIsError: (isError: boolean) => void,
+  name: string | undefined,
+  currentNode: string
+) => {
+  const filePath = extractFolderPath(currentNode);
+  const path = getPath(filePath) + `\\${name}`;
+  await createDir(path, {
     dir: BaseDirectory.Document,
   })
     .then(() => {
