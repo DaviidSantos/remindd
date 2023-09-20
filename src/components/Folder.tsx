@@ -12,19 +12,17 @@ interface FolderProps {
 const Folder: FC<FolderProps> = ({ path, children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { currentNode, setCurrentNode } = useFileTreeContext();
-
-  const openCloseFolder = () => {
-    setIsOpen(!isOpen);
-    setCurrentNode(path!);
-  };
-
+  
   return (
     <div>
       <button
         className={`flex items-center py-1 px-2 rounded-md break-all text-left ${
           currentNode === path ? "bg-zinc-500/30" : ""
         }`}
-        onClick={openCloseFolder}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          setCurrentNode(path!);
+        }}
       >
         {isOpen ? (
           <AiOutlineFolderOpen className="text-zinc-800 h-4" />
