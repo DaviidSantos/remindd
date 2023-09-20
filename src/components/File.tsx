@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { getNodeName } from "../lib/utils";
+import { deleteFile, getNodeName } from "../lib/utils";
 import { useFileTreeContext } from "../context/FileTreeContext";
 import ContextMenu from "./ContextMenu";
 import ContextMenuItem from "./ContextMenuItem";
@@ -26,7 +26,7 @@ const File: FC<FileProps> = ({ path }) => {
       <ContextMenuItem
         icon={PiTrashLight}
         description="Apagar anotação"
-        action={() => {}}
+        action={deleteFile}
         path={path}
       />
     </ContextMenu>

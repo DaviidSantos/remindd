@@ -1,4 +1,4 @@
-import { writeTextFile, BaseDirectory, createDir } from "@tauri-apps/api/fs";
+import { writeTextFile, BaseDirectory, createDir, removeFile } from "@tauri-apps/api/fs";
 
 export const getNodeName = (filePath: string) => {
   if (!filePath) {
@@ -68,3 +68,9 @@ export const createFolder = async (
       setIsError(true);
     });
 };
+
+export const deleteFile = async (path: string) => {
+  await removeFile(getPath(path), {
+    dir: BaseDirectory.Document,
+  });
+}
