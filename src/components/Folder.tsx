@@ -1,8 +1,11 @@
 import { FC, useState } from "react";
 import File from "./File";
 import { TreeNode, useFileTreeContext } from "../context/FileTreeContext";
-import { getNodeName } from "../lib/utils";
+import { deleteFolder, getNodeName } from "../lib/utils";
 import { AiOutlineFolder, AiOutlineFolderOpen } from "react-icons/ai";
+import ContextMenu from "./ContextMenu";
+import ContextMenuItem from "./ContextMenuItem";
+import { PiTrashLight } from "react-icons/pi";
 
 interface FolderProps {
   path: string | undefined;
@@ -12,27 +15,36 @@ interface FolderProps {
 const Folder: FC<FolderProps> = ({ path, children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { currentNode, setCurrentNode } = useFileTreeContext();
-  
+
   return (
     <div>
-      <button
-        className={`flex items-center py-1 px-2 rounded-md break-all text-left ${
-          currentNode === path ? "bg-zinc-500/30" : ""
-        }`}
-        onClick={() => {
-          setIsOpen(!isOpen);
-          setCurrentNode(path!);
-        }}
-      >
-        {isOpen ? (
-          <AiOutlineFolderOpen className="text-zinc-800 h-4" />
-        ) : (
-          <AiOutlineFolder className="text-zinc-800 h-4" />
-        )}
-        <span className={`text-zinc-800 text-sm ml-2`}>
-          {getNodeName(path!)}
-        </span>
-      </button>
+      <ContextMenu>
+        <button
+          className={`flex items-center py-1 px-2 rounded-md break-all text-left ${
+            currentNode === path ? "bg-zinc-500/30" : ""
+          }`}
+          onClick={() => {
+            setIsOpen(!isOpen);
+            setCurrentNode(path!);
+          }}
+        >
+          {isOpen ? (
+            <AiOutlineFolderOpen className="text-zinc-800 h-4" />
+          ) : (
+            <AiOutlineFolder className="text-zinc-800 h-4" />
+          )}
+          <span className={`text-zinc-800 text-sm ml-2`}>
+            {getNodeName(path!)}
+          </span>
+        </button>
+
+        <ContextMenuItem
+          icon={PiTrashLight}
+          description="Apagar pasta"
+          action={deleteFolder}
+          path={path!}
+        />
+      </ContextMenu>
       {children && (
         <div
           className={`border-l border-l-zinc-200 pl-3 ml-3 mt-1 ${
