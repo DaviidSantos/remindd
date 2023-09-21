@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { LuFolderTree } from "react-icons/lu";
 import {
   PiNotePencil,
@@ -7,13 +6,10 @@ import {
 } from "react-icons/pi";
 import { HiOutlineCog } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
+import { useExplorerContext } from "../context/ExplorerContext";
 
-interface MenuProps {
-  isFileTreeOpen: boolean;
-  openCloseFileTree: () => void;
-}
-
-const Menu: FC<MenuProps> = ({ isFileTreeOpen, openCloseFileTree }) => {
+const Menu = () => {
+  const { isExplorerOpen, setIsExplorerOpen } = useExplorerContext();
   const location = useLocation();
 
   const routes = [
@@ -47,10 +43,10 @@ const Menu: FC<MenuProps> = ({ isFileTreeOpen, openCloseFileTree }) => {
     <aside className="h-full w-9 bg-white/95 flex flex-col justify-between border-r ">
       <div>
         <button
-          className={`w-full p-2 flex justify-center hover:bg-zinc-100/90 group ${
-            isFileTreeOpen ? "bg-zinc-300/75" : ""
+          className={`w-full p-2 flex justify-center hover:bg-zinc-300/75 group ${
+            isExplorerOpen ? "bg-zinc-300/75" : ""
           }`}
-          onClick={openCloseFileTree}
+          onClick={() => setIsExplorerOpen(!isExplorerOpen)}
         >
           <LuFolderTree className="text-zinc-800" />
         </button>
