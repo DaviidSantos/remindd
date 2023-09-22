@@ -3,10 +3,16 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import CharacterCount from "@tiptap/extension-character-count";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { open } from "@tauri-apps/api/shell";
+import { Note } from "../context/NotesContext";
 
-const Note = () => {
+interface NoteProps {
+  note: Note;
+}
+
+const Note: FC<NoteProps> = ({ note }) => {
+  const [title, setTitle] = useState(note.title);
   const [referencias, setReferencias] = useState<string[]>([]);
   const [novaReferencia, setNovaReferencia] = useState<string>();
   const urlRegex = /^(https?:\/\/)?(www\.[^\s/$.?#].[^\s]*)$/i;
@@ -31,7 +37,7 @@ const Note = () => {
         limit: 700,
       }),
     ],
-    content: "",
+    content: note.content,
     autofocus: true,
     editorProps: {
       attributes: {
@@ -44,6 +50,8 @@ const Note = () => {
     <div className="w-full h-full bg-zinc-50 border-l">
       <div className="h-fit w-3/4 py-6 px-4 mx-auto my-4 border rounded-md">
         <input
+          value={title}
+          onChange={(e) => setTitle(e.currentTarget.value)}
           type="text"
           className="w-full font-black text-2xl focus:outline-none placeholder-zinc-700 bg-inherit"
           placeholder="Titulo da anotação"
