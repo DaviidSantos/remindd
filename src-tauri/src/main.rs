@@ -61,10 +61,17 @@ fn create_folders_if_not_exist() {
       }
   }
 
-  let json = documents_directory.join("Remind/.config/notes.json");
-  if !json.exists() {
-      if let Err(err) = fs::write(&json, "[]") {
-          eprintln!("Failed to create file {:?}: {}", json, err);
+  let notes = documents_directory.join("Remind/.config/notes.json");
+  if !notes.exists() {
+      if let Err(err) = fs::write(&notes, "[]") {
+          eprintln!("Failed to create file {:?}: {}", notes, err);
+      }
+  }
+
+  let tags = documents_directory.join("Remind/.config/tags.json");
+  if !tags.exists() {
+      if let Err(err) = fs::write(&tags, "[]") {
+          eprintln!("Failed to create file {:?}: {}", tags, err);
       }
   }
 }

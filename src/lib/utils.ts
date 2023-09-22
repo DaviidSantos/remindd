@@ -4,6 +4,7 @@ import {
   createDir,
   removeFile,
   removeDir,
+  readTextFile,
 } from "@tauri-apps/api/fs";
 
 export const getNodeName = (filePath: string) => {
@@ -41,9 +42,9 @@ export const createNote = async (
   setIsOpen: (isOpen: boolean) => void,
   setIsError: (isError: boolean) => void,
   title: string | undefined,
-  currentNode: string
+  currentNode?: string
 ) => {
-  const filePath = extractFolderPath(currentNode);
+  const filePath = extractFolderPath(currentNode!);
   const path = getPath(filePath) + `\\${title}.md`;
   await writeTextFile(`${path}`, "", {
     dir: BaseDirectory.Document,
@@ -60,9 +61,9 @@ export const createFolder = async (
   setIsOpen: (isOpen: boolean) => void,
   setIsError: (isError: boolean) => void,
   name: string | undefined,
-  currentNode: string
+  currentNode?: string
 ) => {
-  const filePath = extractFolderPath(currentNode);
+  const filePath = extractFolderPath(currentNode!);
   const path = getPath(filePath) + `\\${name}`;
   await createDir(path, {
     dir: BaseDirectory.Document,
@@ -86,4 +87,36 @@ export const deleteFolder = async (path: string) => {
     dir: BaseDirectory.Document,
     recursive: true,
   });
+};
+
+export const createTag = async (
+  setIsOpen: (isOpen: boolean) => void,
+  setIsError: (isError: boolean) => void,
+  name: string | undefined
+) => {
+  try {
+    const tags: string[] = JSON.parse(
+      await readTextFile("Remind\\.config\\tags.json", {
+        dir: BaseDirectory.Document,
+      })
+    );
+  
+    if (tags.some((tag) => tag === name)) {
+      throw new Error();
+    }
+  
+    tags.push(name!);
+  
+    await writeTextFile("Remind\\.config\\tags.json", JSON.stringify(tags), {
+      dir: BaseDirectory.Document,
+    })
+      .then(() => {
+        setIsOpen(false);
+      })
+      .catch(() => {
+        setIsError(true);
+      });
+  } catch (e) {
+    setIsError(true)
+  }
 };

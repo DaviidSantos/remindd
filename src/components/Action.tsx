@@ -12,7 +12,7 @@ interface ActionProps {
     setIsOpen: (isOpen: boolean) => void,
     setIsError: (isError: boolean) => void,
     input: string | undefined,
-    currentNode: string
+    currentNode?: string
   ) => Promise<void>;
 }
 
@@ -81,7 +81,7 @@ const Action: FC<ActionProps> = ({
                 id="input"
               />
               {isError && (
-                <span className="text-xs text-red-600 absolute -top-1.5 right-3 px-2 bg-zinc-900">
+                <span className="text-xs text-red-600 absolute -top-1.5 right-3 px-2 bg-zinc-50">
                   {errorMessage}
                 </span>
               )}
