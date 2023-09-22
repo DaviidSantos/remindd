@@ -17,7 +17,7 @@ export const getNodeName = (filePath: string) => {
   return lastPart;
 };
 
-const getPath = (path: string) => {
+export const getPath = (path: string) => {
   const remindSubstring = "Documents\\";
   const index = path.indexOf(remindSubstring);
 

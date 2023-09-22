@@ -1,12 +1,10 @@
 import { Tab } from "@headlessui/react";
 import { useNotesContext } from "../context/NotesContext";
 import { HiX } from "react-icons/hi";
-import { useState } from "react";
 import Note from "./Note";
 
 const Tabs = () => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const { notes, setNotes } = useNotesContext();
+  const { notes, setNotes, activeNote, setActiveNote } = useNotesContext();
 
   const classNames = (...classes: string[]) => {
     return classes.filter(Boolean).join(" ");
@@ -15,15 +13,16 @@ const Tabs = () => {
   const closeTab = (title: string) => {
     const updatedNotes = notes.filter((note) => note.title !== title);
 
-    if (selectedIndex > 0) {
-      setSelectedIndex(selectedIndex - 1);
+    if (activeNote > 0) {
+      setActiveNote(activeNote - 1);
     }
+    
     setNotes(updatedNotes);
   };
 
   return (
     <div className="w-full h-full bg-zinc-50">
-      <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+      <Tab.Group selectedIndex={activeNote} onChange={setActiveNote}>
         <Tab.List className="w-full flex">
           {notes.map((note) => (
             <Tab
