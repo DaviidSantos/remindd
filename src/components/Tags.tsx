@@ -1,14 +1,31 @@
 import { BsPlus } from "react-icons/bs";
 import { AiOutlineLeft } from "react-icons/ai";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import Action from "./Action";
 import { createTag } from "../lib/utils";
+import { readTextFile, BaseDirectory } from "@tauri-apps/api/fs";
 
 interface TagsProps {
   setViewType: (viewType: string) => void;
 }
 
 const Tags: FC<TagsProps> = ({ setViewType }) => {
+  const [tags, setTags] = useState<string[]>([]);
+
+  const readTags = async () => {
+    const tags: string[] = JSON.parse(
+      await readTextFile("Remind\\.config\\tags.json", {
+        dir: BaseDirectory.Document,
+      })
+    );
+
+    setTags(tags);
+  };
+
+  useEffect(() => {
+    readTags();
+  });
+
   return (
     <section className="px-5 py-3 h-3/4 relative">
       <div className="flex justify-between">
@@ -29,6 +46,12 @@ const Tags: FC<TagsProps> = ({ setViewType }) => {
           />
         </button>
       </div>
+      <hr />
+      <ul className="flex flex-col gap-3 px-2 my-4">
+        {tags.map((tag) => (
+          <li className="text-sm text-zinc-800">{tag}</li>
+        ))}
+      </ul>
     </section>
   );
 };
