@@ -47,25 +47,25 @@ const Note: FC<NoteProps> = ({ note }) => {
   });
 
   return (
-    <div className="w-full h-full bg-zinc-50 border-l">
-      <div className="h-fit w-3/4 py-6 px-4 mx-auto my-4 border rounded-md">
+    <div className="w-full h-full bg-zinc-900">
+      <div className="h-fit w-3/4 py-6 px-4 mx-auto my-4 border border-zinc-800 rounded-md">
         <input
           value={title}
           onChange={(e) => setTitle(e.currentTarget.value)}
           type="text"
-          className="w-full font-black text-2xl focus:outline-none placeholder-zinc-700 bg-inherit"
+          className="w-full font-black text-2xl focus:outline-none placeholder-zinc-300 bg-inherit text-zinc-200"
           placeholder="Titulo da anotação"
         />
         <EditorContent
           spellCheck={false}
-          className=" bg-inherit prose-sm prose leading-3 w-full my-4"
+          className=" bg-inherit prose-sm prose prose-invert leading-3 w-full my-4"
           editor={editor}
         />
         <hr />
-        <h3 className="text-2xl font-black my-4">Referências</h3>
+        <h3 className="text-2xl font-black text-zinc-200 my-4">Referências</h3>
         <form onSubmit={adicionarReferencia}>
           <input
-            className="w-full focus:outline-none placeholder-zinc-700 bg-inherit"
+            className="w-full focus:outline-none placeholder-zinc-300 text-zinc-200 bg-inherit"
             placeholder="Adicionar referência"
             onChange={(e) => setNovaReferencia(e.currentTarget.value)}
           />
@@ -78,7 +78,7 @@ const Note: FC<NoteProps> = ({ note }) => {
 
         <ul className="flex flex-col gap-2 list-disc px-5 my-4">
           {referencias.map((referencia) => (
-            <li key="referencia">
+            <li key={referencia}>
               {urlRegex.test(referencia) ? (
                 <button
                   className="text-blue-800 underline"
@@ -87,7 +87,7 @@ const Note: FC<NoteProps> = ({ note }) => {
                   {referencia}
                 </button>
               ) : (
-                <span>{referencia}</span>
+                <span className="text-zinc-200">{referencia}</span>
               )}
             </li>
           ))}

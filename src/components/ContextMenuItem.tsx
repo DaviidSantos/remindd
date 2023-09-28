@@ -32,10 +32,10 @@ const ContextMenuItem: FC<ContextMenuItemProps> = ({
   return (
     <button
       onClick={itemClick}
-      className="flex items-center gap-2 rounded-md hover:bg-zinc-200 p-2 w-full"
+      className="flex items-center gap-4 rounded-md hover:bg-zinc-800 p-2 w-full"
     >
-      <Icon className="h-3 text-zinc-600" />
-      <span className="text-xs text-zinc-800 font-medium">{description}</span>
+      <Icon className="h-4 text-zinc-100" />
+      <span className="text-xs text-zinc-100">{description}</span>
     </button>
   );
 };

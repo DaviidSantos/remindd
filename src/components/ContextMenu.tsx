@@ -11,10 +11,7 @@ const ContextMenu: FC<ContextMenuProps> = ({ children }) => {
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (
-        menu.current &&
-        !menu.current.contains(e.target as Node | null)
-      ) {
+      if (menu.current && !menu.current.contains(e.target as Node | null)) {
         setIsOpen(false);
       }
     }
@@ -32,7 +29,7 @@ const ContextMenu: FC<ContextMenuProps> = ({ children }) => {
 
       {isOpen && (
         <div
-          className="absolute top-8 p-1 border rounded-md bg-zinc-50 shadow-md left-0 right-0 w-11/12 mx-auto z-50"
+          className="absolute top-8 p-1 border border-zinc-800 shadow rounded-md bg-zinc-900 shadow left-0 right-0 w-11/12 mx-auto z-50"
           ref={menu}
         >
           {items

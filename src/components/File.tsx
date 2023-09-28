@@ -36,8 +36,8 @@ const File: FC<FileProps> = ({ path }) => {
       <button
         onClick={() => setCurrentNode(path)}
         onDoubleClick={openNote}
-        className={`text-sm inline-flex break-all text-left py-1 px-2 rounded-md text-zinc-800 ${
-          currentNode === path ? "bg-zinc-500/30 text-zinc-300" : ""
+        className={`text-xs inline-flex break-all text-left py-1 px-2 rounded-md text-zinc-100 ${
+          currentNode === path ? "bg-zinc-500/30 text-zinc-100" : ""
         }`}
       >
         {getNodeName(path)}

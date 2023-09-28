@@ -21,7 +21,7 @@ const Tabs = () => {
   };
 
   return (
-    <div className="w-full h-full bg-zinc-50">
+    <div className="w-full h-full bg-zinc-900">
       <Tab.Group selectedIndex={activeNote} onChange={setActiveNote}>
         <Tab.List className="w-full flex">
           {notes.map((note) => (
@@ -29,14 +29,14 @@ const Tabs = () => {
               key={note.path}
               className={({ selected }) =>
                 classNames(
-                  "px-3 p-1 text-sm flex items-center gap-2 bg-zinc-100",
-                  selected ? "bg-zinc-50 text-zinc-800 focus:outline-none" : ""
+                  "px-3 p-1 text-sm flex items-center gap-2",
+                  selected ? "bg-zinc-900 focus:outline-none" : "bg-zinc-800"
                 )
               }
             >
-              <span>{note.title}</span>{" "}
+              <span className="text-zinc-100">{note.title}</span>{" "}
               <button onClick={() => closeTab(note.title)}>
-                <HiX className="h-4 text-zinc-700" />
+                <HiX className="h-4 text-zinc-100" />
               </button>
             </Tab>
           ))}

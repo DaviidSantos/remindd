@@ -28,12 +28,12 @@ const Tags: FC<TagsProps> = ({ setViewType }) => {
 
   return (
     <section className="px-5 py-3 h-3/4 relative">
-      <div className="flex justify-between">
+      <div className="flex justify-between border-b border-b-zinc-800 pb-3">
         <div className="flex items-center gap-2">
           <button onClick={() => setViewType("file_tree")}>
-            <AiOutlineLeft className="h-3 text-zinc-600" />
+            <AiOutlineLeft className="h-3 text-zinc-100" />
           </button>
-          <h4 className="text-sm font-semibold text-zinc-800">Tags</h4>
+          <h4 className="text-sm font-semibold text-zinc-100">Tags</h4>
         </div>
         <button>
           <Action
@@ -46,10 +46,10 @@ const Tags: FC<TagsProps> = ({ setViewType }) => {
           />
         </button>
       </div>
-      <hr />
+      
       <ul className="flex flex-col gap-3 px-2 my-4">
         {tags.map((tag) => (
-          <li className="text-sm text-zinc-800">{tag}</li>
+          <li className="text-sm text-zinc-300 p-1 rounded-md hover:bg-zinc-800/75">{tag}</li>
         ))}
       </ul>
     </section>

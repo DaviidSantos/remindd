@@ -1,4 +1,3 @@
-import { LuFolderTree } from "react-icons/lu";
 import {
   PiNotePencil,
   PiClockCounterClockwiseLight,
@@ -7,6 +6,7 @@ import {
 import { HiOutlineCog } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { useExplorerContext } from "../context/ExplorerContext";
+import { BsFolder2 } from "react-icons/bs";
 
 const Menu = () => {
   const { isExplorerOpen, setIsExplorerOpen } = useExplorerContext();
@@ -40,24 +40,22 @@ const Menu = () => {
   ];
 
   return (
-    <aside className="h-full w-9 bg-white/95 flex flex-col justify-between border-r ">
+    <aside className="h-full w-9 bg-black/75 flex flex-col justify-between">
       <div>
         <button
-          className={`w-full p-2 flex justify-center hover:bg-zinc-300/75 group ${
-            isExplorerOpen ? "bg-zinc-300/75" : ""
-          }`}
+          className={`w-full p-2 flex justify-center hover:bg-zinc-800/75 group `}
           onClick={() => setIsExplorerOpen(!isExplorerOpen)}
         >
-          <LuFolderTree className="text-zinc-800" />
+          <BsFolder2 className="text-zinc-300" />
         </button>
       </div>
 
-      <nav className="flex flex-col text-zinc-800 w-full">
+      <nav className="flex flex-col text-zinc-300 w-full">
         {routes.map((route) => (
           <Link
             to={route.href}
-            className={`flex justify-center hover:bg-zinc-300/75 p-2 ${
-              route.isActive ? "bg-zinc-300/75" : ""
+            className={`flex justify-center hover:bg-zinc-800/75 p-2 ${
+              route.isActive ? "bg-zinc-800/75" : ""
             }`}
           >
             {route.icon}

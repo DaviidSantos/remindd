@@ -29,11 +29,11 @@ const Folder: FC<FolderProps> = ({ path, children }) => {
           }}
         >
           {isOpen ? (
-            <AiOutlineFolderOpen className="text-zinc-800 h-4" />
+            <AiOutlineFolderOpen className="text-zinc-100 h-4" />
           ) : (
-            <AiOutlineFolder className="text-zinc-800 h-4" />
+            <AiOutlineFolder className="text-zinc-100 h-4" />
           )}
-          <span className={`text-zinc-800 text-sm ml-2`}>
+          <span className={`text-zinc-100 text-xs ml-2`}>
             {getNodeName(path!)}
           </span>
         </button>
@@ -47,7 +47,7 @@ const Folder: FC<FolderProps> = ({ path, children }) => {
       </ContextMenu>
       {children && (
         <div
-          className={`border-l border-l-zinc-200 pl-3 ml-3 mt-1 ${
+          className={`border-l border-l-zinc-800 pl-3 ml-3 mt-1 ${
             isOpen ? "flex flex-col gap-2" : "hidden"
           }`}
         >

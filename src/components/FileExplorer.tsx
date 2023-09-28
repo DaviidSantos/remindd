@@ -15,10 +15,10 @@ const FileExplorer = () => {
   return (
     isExplorerOpen && (
       <FileTreeContextProvider>
-        <section className="h-full w-[300px] bg-white/95">
-          <div className="flex justify-between items-center py-2 px-6 border-b rounded-lg relative">
+        <section className="h-full w-[300px] bg-zinc-900/90 border-x border-x-zinc-800">
+          <div className="flex justify-between items-center py-2 px-6 border-b border-b-zinc-800 rounded-lg relative">
             <button
-              className="p-1 hover:bg-zinc-300 rounded-full"
+              className="p-1 hover:bg-zinc-700 rounded-full text-zinc-100"
               onClick={() => setViewType("tags")}
             >
               <PiTagThin className="h-4" />

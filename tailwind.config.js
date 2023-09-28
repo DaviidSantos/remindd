@@ -8,7 +8,14 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        secondary: {
+          600: "#7952CB",
+          700: "#5632A1",
+        },
+      }
+    },
   },
   plugins: [typography],
 }

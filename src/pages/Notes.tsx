@@ -15,7 +15,7 @@ const Notes = () => {
       {notes.length > 0 ? (
         <Tabs />
       ) : (
-        <div className="w-full h-full bg-zinc-50 flex justify-center items-center">
+        <div className="w-full h-full bg-zinc-900 flex justify-center items-center">
           <h3 className="text-2xl text-zinc-700 font-black">
             Crie ou abra uma anotação!
           </h3>
