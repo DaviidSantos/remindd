@@ -1,11 +1,10 @@
 import FileExplorer from "../components/FileExplorer";
-import Note from "../components/Note";
 import Tabs from "../components/Tabs";
 import { FileTreeContextProvider } from "../context/FileTreeContext";
 import { useNotesContext } from "../context/NotesContext";
 
 const Notes = () => {
-  const { notes } = useNotesContext();
+  const { notes, setNotes } = useNotesContext();
 
   return (
     <div className="flex w-full">

@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { IconType } from "react-icons";
 import { useFileTreeContext } from "../context/FileTreeContext";
+import { Note, useNotesContext } from "../context/NotesContext";
 
 interface ActionProps {
   icon: IconType;
@@ -14,6 +15,7 @@ interface ActionProps {
     input: string | undefined,
     currentNode?: string
   ) => Promise<void>;
+  actionType: string;
 }
 
 const Action: FC<ActionProps> = ({
@@ -23,10 +25,12 @@ const Action: FC<ActionProps> = ({
   buttonText,
   errorMessage,
   action,
+  actionType,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isError, setIsError] = useState(false);
   const { currentNode, readFileTree } = useFileTreeContext();
+  const { notes, setNotes } = useNotesContext();
 
   const [input, setInput] = useState<string | undefined>();
   const componentRef = useRef<HTMLDivElement | null>(null);
@@ -52,6 +56,18 @@ const Action: FC<ActionProps> = ({
   const formSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await action(setIsOpen, setIsError, input, currentNode!);
+
+    if (actionType === "note") {
+      const note: Note = {
+        title: input!,
+        content: "",
+        path: `${currentNode}\\${input}.md`,
+      };
+
+      const updatedNotes = [...notes, note];
+      setNotes(updatedNotes);
+    }
+
     readFileTree();
   };
 

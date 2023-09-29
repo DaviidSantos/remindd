@@ -15,7 +15,7 @@ const FileExplorer = () => {
   return (
     isExplorerOpen && (
       <FileTreeContextProvider>
-        <section className="h-full w-[300px] bg-zinc-900/90 border-x border-x-zinc-800">
+        <section className="h-full w-[300px] bg-black/75 border-x border-x-zinc-800">
           <div className="flex justify-between items-center py-2 px-6 border-b border-b-zinc-800 rounded-lg relative">
             <button
               className="p-1 hover:bg-zinc-700 rounded-full text-zinc-100"
@@ -30,6 +30,7 @@ const FileExplorer = () => {
               errorMessage="Anotação já existe"
               placeholder="Titulo da anotação"
               action={createNote}
+              actionType="note"
             />
             <Action
               icon={HiOutlineFolderPlus}
@@ -38,6 +39,7 @@ const FileExplorer = () => {
               errorMessage="Pasta já existe"
               placeholder="Nome da pasta"
               action={createFolder}
+              actionType="folder"
             />
           </div>
           {viewType === "file_tree" ? (
