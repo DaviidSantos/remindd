@@ -5,7 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import { FC, useState } from "react";
 import { open } from "@tauri-apps/api/shell";
-import { Note } from "../context/NotesContext";
+import { Note, useNotesContext } from "../context/NotesContext";
 import { writeTextFile, BaseDirectory } from "@tauri-apps/api/fs";
 import { getPath } from "../lib/utils";
 
@@ -14,6 +14,7 @@ interface NoteProps {
 }
 
 const Note: FC<NoteProps> = ({ note }) => {
+  const { activeNote, notes, setNotes, setActiveNote } = useNotesContext();
   const [referencias, setReferencias] = useState<string[]>([]);
   const [novaReferencia, setNovaReferencia] = useState<string>();
   const urlRegex = /^(https?:\/\/)?(www\.[^\s/$.?#].[^\s]*)$/i;
@@ -51,6 +52,21 @@ const Note: FC<NoteProps> = ({ note }) => {
     },
   });
 
+  const closeNote = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.which == 87) {
+      if (e.ctrlKey) {
+        const updatedNotes = notes.filter(
+          (itemNote) => itemNote.title !== note.title
+        );
+        setNotes(updatedNotes);
+
+        if (activeNote !== 0) {
+          setActiveNote(activeNote - 1);
+        }
+      }
+    }
+  };
+
   const saveNote = async () => {
     const path = getPath(note.path);
     await writeTextFile(
@@ -66,6 +82,7 @@ const Note: FC<NoteProps> = ({ note }) => {
           {note.title.replace(/\.md$/, "")}
         </h2>
         <EditorContent
+          onKeyDown={closeNote}
           spellCheck={false}
           className=" bg-inherit prose-sm prose prose-invert leading-3 w-full my-4"
           editor={editor}
