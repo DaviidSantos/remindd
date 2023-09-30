@@ -12,7 +12,6 @@ interface NoteProps {
 }
 
 const Note: FC<NoteProps> = ({ note }) => {
-  const [title, setTitle] = useState(note.title);
   const [referencias, setReferencias] = useState<string[]>([]);
   const [novaReferencia, setNovaReferencia] = useState<string>();
   const urlRegex = /^(https?:\/\/)?(www\.[^\s/$.?#].[^\s]*)$/i;
@@ -49,13 +48,7 @@ const Note: FC<NoteProps> = ({ note }) => {
   return (
     <div className="w-full h-full bg-zinc-900">
       <div className="h-fit w-3/4 py-6 px-4 mx-auto my-4 border border-zinc-800 rounded-md">
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.currentTarget.value)}
-          type="text"
-          className="w-full font-black text-2xl focus:outline-none placeholder-zinc-300 bg-inherit text-zinc-200"
-          placeholder="Titulo da anotação"
-        />
+        <h2 className="font-black text-2xl text-zinc-200">{note.title.replace(/\.md$/, "")}</h2>
         <EditorContent
           spellCheck={false}
           className=" bg-inherit prose-sm prose prose-invert leading-3 w-full my-4"

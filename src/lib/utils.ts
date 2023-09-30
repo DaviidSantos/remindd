@@ -5,6 +5,7 @@ import {
   removeFile,
   removeDir,
   readTextFile,
+  renameFile,
 } from "@tauri-apps/api/fs";
 
 export const getNodeName = (filePath: string) => {
@@ -28,7 +29,7 @@ export const getPath = (path: string) => {
   }
 };
 
-const extractFolderPath = (input: string): string => {
+export const extractFolderPath = (input: string): string => {
   const regex = /\\[^\\]+\.md$/;
 
   if (regex.test(input)) {
@@ -76,8 +77,8 @@ export const createFolder = async (
     });
 };
 
-export const deleteFile = async (path: string) => {
-  await removeFile(getPath(path), {
+export const deleteFile = async (path?: string) => {
+  await removeFile(getPath(path!), {
     dir: BaseDirectory.Document,
   });
 };
@@ -100,13 +101,13 @@ export const createTag = async (
         dir: BaseDirectory.Document,
       })
     );
-  
+
     if (tags.some((tag) => tag === name)) {
       throw new Error();
     }
-  
+
     tags.push(name!);
-  
+
     await writeTextFile("Remind\\.config\\tags.json", JSON.stringify(tags), {
       dir: BaseDirectory.Document,
     })
@@ -117,6 +118,27 @@ export const createTag = async (
         setIsError(true);
       });
   } catch (e) {
-    setIsError(true)
+    setIsError(true);
   }
+};
+
+export const renameNote = async (
+  setIsOpen: (isOpen: boolean) => void,
+  setIsError: (isError: boolean) => void,
+  title: string | undefined,
+  currentNode?: string
+) => {
+  const folderPath = extractFolderPath(currentNode!);
+  const path = getPath(folderPath) + `\\${title}.md`;
+  await renameFile(`${getPath(currentNode!)}`, `${path}`, {
+    dir: BaseDirectory.Document,
+  })
+    .then(() => {
+      setIsOpen(false);
+
+      setIsError(false);
+    })
+    .catch(() => {
+      setIsError(true);
+    });
 };

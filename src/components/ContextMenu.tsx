@@ -1,11 +1,15 @@
 import { FC, ReactNode, Children, useState, useEffect, useRef } from "react";
+import { useFileTreeContext } from "../context/FileTreeContext";
 
 interface ContextMenuProps {
   children: ReactNode;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  path: string;
 }
 
-const ContextMenu: FC<ContextMenuProps> = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const ContextMenu: FC<ContextMenuProps> = ({ children, path, isOpen, setIsOpen }) => {
+  const { setCurrentNode } = useFileTreeContext();
   const items = Children.toArray(children);
   const menu = useRef<HTMLDivElement | null>(null);
 
@@ -24,7 +28,13 @@ const ContextMenu: FC<ContextMenuProps> = ({ children }) => {
   }, []);
 
   return (
-    <div onAuxClick={() => setIsOpen(true)} className="relative">
+    <div
+      onAuxClick={() => {
+        setIsOpen(true);
+        setCurrentNode(path);
+      }}
+      className="relative"
+    >
       {items[0]}
 
       {isOpen && (

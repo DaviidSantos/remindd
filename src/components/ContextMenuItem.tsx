@@ -3,11 +3,15 @@ import { IconType } from "react-icons";
 import { useFileTreeContext } from "../context/FileTreeContext";
 import { useNotesContext } from "../context/NotesContext";
 
+type AsyncFunction = (path: string) => Promise<void>;
+type VoidFunction = () => void;
+
 interface ContextMenuItemProps {
   icon: IconType;
   description: string;
   path: string;
-  action: (path: string) => Promise<void>;
+  action: AsyncFunction | VoidFunction
+  actionType: string;
 }
 
 const ContextMenuItem: FC<ContextMenuItemProps> = ({
@@ -15,18 +19,24 @@ const ContextMenuItem: FC<ContextMenuItemProps> = ({
   description,
   path,
   action,
+  actionType,
 }) => {
   const { readFileTree } = useFileTreeContext();
   const { notes, setNotes, activeNote, setActiveNote } = useNotesContext();
 
   const itemClick = async () => {
-    await action(path);
-    const updatedNotes = notes.filter((note) => note.path !== path);
-    setNotes(updatedNotes);
-    if (activeNote !== 0) {
-      setActiveNote(activeNote - 1);
+    
+    if (actionType === "delete") {
+      await action(path);
+      const updatedNotes = notes.filter((note) => note.path !== path);
+      setNotes(updatedNotes);
+      if (activeNote !== 0) {
+        setActiveNote(activeNote - 1);
+      }
+      readFileTree();
+    } else {
+      action(path);
     }
-    readFileTree();
   };
 
   return (

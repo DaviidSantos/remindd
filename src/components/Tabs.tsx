@@ -34,7 +34,7 @@ const Tabs = () => {
                 )
               }
             >
-              <span className="text-zinc-100">{note.title}</span>{" "}
+              <span className="text-zinc-100">{note.title.replace(/\.md$/, "")}</span>
               <button onClick={() => closeTab(note.title)}>
                 <HiX className="h-4 text-zinc-100" />
               </button>
