@@ -1,4 +1,4 @@
-import { FC, ReactNode, Children, useState, useEffect, useRef } from "react";
+import { FC, ReactNode, Children, useEffect, useRef } from "react";
 import { useFileTreeContext } from "../context/FileTreeContext";
 
 interface ContextMenuProps {

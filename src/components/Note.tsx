@@ -6,6 +6,8 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { FC, useState } from "react";
 import { open } from "@tauri-apps/api/shell";
 import { Note } from "../context/NotesContext";
+import { writeTextFile, BaseDirectory } from "@tauri-apps/api/fs";
+import { getPath } from "../lib/utils";
 
 interface NoteProps {
   note: Note;
@@ -36,6 +38,10 @@ const Note: FC<NoteProps> = ({ note }) => {
         limit: 700,
       }),
     ],
+    onUpdate: ({ editor }) => {
+      note.content = editor.storage.markdown.getMarkdown();
+      saveNote();
+    },
     content: note.content,
     autofocus: true,
     editorProps: {
@@ -45,10 +51,20 @@ const Note: FC<NoteProps> = ({ note }) => {
     },
   });
 
+  const saveNote = async () => {
+    const path = getPath(note.path);
+    await writeTextFile(
+      { path, contents: note.content },
+      { dir: BaseDirectory.Document }
+    );
+  };
+
   return (
     <div className="w-full h-full bg-zinc-900">
       <div className="h-fit w-3/4 py-6 px-4 mx-auto my-4 border border-zinc-800 rounded-md">
-        <h2 className="font-black text-2xl text-zinc-200">{note.title.replace(/\.md$/, "")}</h2>
+        <h2 className="font-black text-2xl text-zinc-200">
+          {note.title.replace(/\.md$/, "")}
+        </h2>
         <EditorContent
           spellCheck={false}
           className=" bg-inherit prose-sm prose prose-invert leading-3 w-full my-4"
