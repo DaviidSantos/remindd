@@ -3,6 +3,8 @@ import { useFileTreeContext } from "../context/FileTreeContext";
 import Note from "./Note";
 import { useNotesContext } from "../context/NotesContext";
 import { extractFolderPath, getPath } from "../lib/utils";
+import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
+import { NoteItem } from "../lib/types";
 
 interface PopoverProps {
   title: string;
@@ -42,6 +44,37 @@ const Popover: FC<PopoverProps> = ({
     await action(setIsOpen, setIsError, input, currentNode!);
     const folderPath = extractFolderPath(currentNode!);
     const beforeRename = notes.filter((note) => note.path === currentNode);
+
+    const noteItems: NoteItem[] = JSON.parse(
+      await readTextFile("Remind\\.config\\notes.json", {
+        dir: BaseDirectory.Document,
+      })
+    );
+
+    const extractedNotes = noteItems.filter(
+      (noteItem) => noteItem.path !== currentNode
+    );
+
+    const currentNote = noteItems.find(
+      (noteItem) => noteItem.path === currentNode
+    );
+
+    const renamedNote: NoteItem = {
+      due_date: currentNote?.due_date!,
+      efactor: currentNote?.efactor!,
+      interval: currentNote?.interval!,
+      references: currentNote?.references!,
+      repetition: currentNote?.repetition!,
+      path: `${folderPath}\\${input}.md`,
+    };
+
+    const updatedNoteItems = [...extractedNotes, renamedNote];
+
+    await writeTextFile(
+      "Remind\\.config\\notes.json",
+      JSON.stringify(updatedNoteItems),
+      { dir: BaseDirectory.Document }
+    );
 
     if (beforeRename.length > 0) {
       const extractedNotes = notes.filter((note) => note.path !== currentNode);

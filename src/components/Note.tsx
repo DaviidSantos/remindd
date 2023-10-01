@@ -78,7 +78,7 @@ const Note: FC<NoteProps> = ({ note }) => {
       }),
       CharacterCount.configure({
         mode: "nodeSize",
-        limit: 700,
+        limit: 1000,
       }),
     ],
     onUpdate: ({ editor }) => {
@@ -126,13 +126,14 @@ const Note: FC<NoteProps> = ({ note }) => {
         <EditorContent
           onKeyDown={closeNote}
           spellCheck={false}
-          className=" bg-inherit prose-sm prose prose-invert leading-3 w-full my-4"
+          className=" bg-inherit prose-sm prose prose-invert leading-5 w-full my-4"
           editor={editor}
         />
         <hr />
         <h3 className="text-2xl font-black text-zinc-200 my-4">Referências</h3>
         <form onSubmit={adicionarReferencia}>
           <input
+          autoComplete="off"
             value={newReference}
             id="reference"
             className="w-full focus:outline-none placeholder-zinc-300 text-sm text-zinc-200 bg-inherit"
