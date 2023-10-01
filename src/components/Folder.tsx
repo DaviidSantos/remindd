@@ -14,11 +14,16 @@ interface FolderProps {
 
 const Folder: FC<FolderProps> = ({ path, children }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
   const { currentNode, setCurrentNode } = useFileTreeContext();
 
   return (
     <div>
-      <ContextMenu>
+      <ContextMenu
+        path={path!}
+        isOpen={isContextMenuOpen}
+        setIsOpen={setIsContextMenuOpen}
+      >
         <button
           className={`flex items-center py-1 px-2 rounded-md break-all text-left ${
             currentNode === path ? "bg-zinc-500/30" : ""
@@ -43,6 +48,7 @@ const Folder: FC<FolderProps> = ({ path, children }) => {
           description="Apagar pasta"
           action={deleteFolder}
           path={path!}
+          actionType="delete"
         />
       </ContextMenu>
       {children && (
