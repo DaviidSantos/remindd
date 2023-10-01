@@ -2,6 +2,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { useFileTreeContext } from "../context/FileTreeContext";
 import Note from "./Note";
 import { useNotesContext } from "../context/NotesContext";
+import { extractFolderPath, getPath } from "../lib/utils";
 
 interface PopoverProps {
   title: string;
@@ -39,16 +40,19 @@ const Popover: FC<PopoverProps> = ({
   const formSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await action(setIsOpen, setIsError, input, currentNode!);
+    const folderPath = extractFolderPath(currentNode!);
+    const beforeRename = notes.filter((note) => note.path === currentNode);
 
-    if (actionType === "note" && !isError) {
-      const note: Note = {
-        title: input!,
-        content: "",
-        path: `${currentNode}\\${input}.md`,
+    if (beforeRename.length > 0) {
+      const extractedNotes = notes.filter((note) => note.path !== currentNode);
+
+      const note = {
+        title: `${input}.md`,
+        content: beforeRename[0].content,
+        path: `${folderPath}\\${input}.md`,
       };
 
-      const updatedNotes = [...notes, note];
-      setNotes(updatedNotes);
+      setNotes([...extractedNotes, note]);
     }
 
     readFileTree();
