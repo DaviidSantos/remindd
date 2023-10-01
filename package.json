@@ -17,10 +17,12 @@
     "@tiptap/pm": "^2.1.10",
     "@tiptap/react": "^2.1.10",
     "@tiptap/starter-kit": "^2.1.10",
+    "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.11.0",
     "react-router-dom": "^6.16.0",
+    "supermemo": "^2.0.17",
     "tiptap-markdown": "^0.8.2"
   },
   "devDependencies": {

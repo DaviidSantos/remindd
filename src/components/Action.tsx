@@ -2,6 +2,10 @@ import { FC, useEffect, useRef, useState } from "react";
 import { IconType } from "react-icons";
 import { useFileTreeContext } from "../context/FileTreeContext";
 import { Note, useNotesContext } from "../context/NotesContext";
+import { path } from "@tauri-apps/api";
+import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
+import { NoteItem } from "../lib/types";
+import dayjs from "dayjs";
 
 interface ActionProps {
   icon: IconType;
@@ -63,6 +67,28 @@ const Action: FC<ActionProps> = ({
         content: "",
         path: `${currentNode}\\${input}.md`,
       };
+
+      const noteItem: NoteItem = {
+        interval: 0,
+        repetition: 0,
+        efactor: 2.5,
+        due_date: dayjs(Date.now() + 3600 * 1000 * 24).toISOString(),
+        path: note.path,
+        references: []
+      };
+
+      const noteItems: NoteItem[] = JSON.parse(
+        await readTextFile("Remind\\.config\\notes.json", {
+          dir: BaseDirectory.Document,
+        })
+      );
+
+      noteItems.push(noteItem);
+      await writeTextFile(
+        "Remind\\.config\\notes.json",
+        JSON.stringify(noteItems),
+        { dir: BaseDirectory.Document }
+      );
 
       const updatedNotes = [...notes, note];
       setNotes(updatedNotes);
