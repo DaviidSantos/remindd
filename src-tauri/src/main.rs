@@ -74,4 +74,11 @@ fn create_folders_if_not_exist() {
           eprintln!("Failed to create file {:?}: {}", tags, err);
       }
   }
+
+  let cards = documents_directory.join("Remind/.config/cards.json");
+  if !cards.exists() {
+      if let Err(err) = fs::write(&cards, "[]") {
+          eprintln!("Failed to create file {:?}: {}", cards, err);
+      }
+  }
 }

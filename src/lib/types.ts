@@ -5,3 +5,8 @@ export interface NoteItem extends SuperMemoItem {
   path: string;
   references: string[];
 }
+
+export interface Card {
+  name: string;
+  notes: string[];
+}
