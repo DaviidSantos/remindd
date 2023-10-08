@@ -2,7 +2,6 @@ import { FC, useEffect, useRef, useState } from "react";
 import { IconType } from "react-icons";
 import { useFileTreeContext } from "../context/FileTreeContext";
 import { Note, useNotesContext } from "../context/NotesContext";
-import { path } from "@tauri-apps/api";
 import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
 import { NoteItem } from "../lib/types";
 import dayjs from "dayjs";
@@ -74,7 +73,8 @@ const Action: FC<ActionProps> = ({
         efactor: 2.5,
         due_date: dayjs(Date.now() + 3600 * 1000 * 24).toISOString(),
         path: note.path,
-        references: []
+        references: [],
+        tags: [],
       };
 
       const noteItems: NoteItem[] = JSON.parse(
@@ -117,6 +117,7 @@ const Action: FC<ActionProps> = ({
               <input
                 onChange={(e) => setInput(e.currentTarget.value)}
                 type="text"
+                autoComplete="off"
                 autoFocus={true}
                 placeholder={placeholder}
                 className="w-full p-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-xs text-zinc-100"
