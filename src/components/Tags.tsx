@@ -1,9 +1,9 @@
-import { BsPlus } from "react-icons/bs";
+import { BsPlus, BsX } from "react-icons/bs";
 import { AiOutlineLeft } from "react-icons/ai";
 import { FC, useEffect, useState } from "react";
 import Action from "./Action";
 import { createTag } from "../lib/utils";
-import { readTextFile, BaseDirectory } from "@tauri-apps/api/fs";
+import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
 
 interface TagsProps {
   setViewType: (viewType: string) => void;
@@ -20,6 +20,23 @@ const Tags: FC<TagsProps> = ({ setViewType }) => {
     );
 
     setTags(tags);
+  };
+
+  const deleteTag = async (tag: string) => {
+    const tags: string[] = JSON.parse(
+      await readTextFile("Remind\\.config\\tags.json", {
+        dir: BaseDirectory.Document,
+      })
+    );
+
+    const updatedTags = tags.filter((tagItem) => tagItem !== tag);
+    await writeTextFile(
+      "Remind\\.config\\tags.json",
+      JSON.stringify(updatedTags),
+      {
+        dir: BaseDirectory.Document,
+      }
+    ).then(() => setTags(updatedTags));
   };
 
   useEffect(() => {
@@ -43,13 +60,19 @@ const Tags: FC<TagsProps> = ({ setViewType }) => {
             errorMessage="Erro ao criar tag"
             placeholder="Nome da tag"
             action={createTag}
+            actionType="add"
           />
         </button>
       </div>
-      
+
       <ul className="flex flex-col gap-3 px-2 my-4">
         {tags.map((tag) => (
-          <li className="text-sm text-zinc-300 p-1 rounded-md hover:bg-zinc-800/75">{tag}</li>
+          <li className="text-sm text-zinc-300 p-1 rounded-md hover:bg-zinc-800/75 flex items-center justify-between">
+            <span>{tag}</span>
+            <button onClick={() => deleteTag(tag)}>
+              <BsX className="text-zinc-200 h-4" />
+            </button>
+          </li>
         ))}
       </ul>
     </section>

@@ -47,7 +47,9 @@ const NoteOptions: FC<NoteOptionsProps> = ({ path }) => {
     );
 
     const updatedNote = notes.find((noteItem) => noteItem.path === path);
-    updatedNote?.tags.push(tag);
+    if(!updatedNote?.tags.some((tagItem) => tagItem === tag)) {
+      updatedNote?.tags.push(tag);
+    }
 
     const updatedNotes = [...extractedNotes, updatedNote];
     setNote(note);

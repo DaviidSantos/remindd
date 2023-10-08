@@ -36,13 +36,17 @@ const Select: FC<SelectOptions> = ({ options, action }) => {
         >
           <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-zinc-900 border border-zinc-800 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {options.map((option, optionIndx) => (
-              <Listbox.Option
-                key={optionIndx}
-                className="relative cursor-default select-none p-2 text-zinc-200 hover:bg-zinc-700"
-                value={option}
-              >
-                <span className="text-xs">{option}</span>
-              </Listbox.Option>
+              <>
+                {option !== options[0] && (
+                  <Listbox.Option
+                    key={optionIndx}
+                    className="relative cursor-default select-none p-2 text-zinc-200 hover:bg-zinc-700"
+                    value={option}
+                  >
+                    <span className="text-xs">{option}</span>
+                  </Listbox.Option>
+                )}
+              </>
             ))}
           </Listbox.Options>
         </Transition>
