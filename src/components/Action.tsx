@@ -5,6 +5,7 @@ import { Note, useNotesContext } from "../context/NotesContext";
 import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
 import { NoteItem } from "../lib/types";
 import dayjs from "dayjs";
+import { extractFolderPath } from "../lib/utils";
 
 interface ActionProps {
   icon: IconType;
@@ -64,7 +65,7 @@ const Action: FC<ActionProps> = ({
       const note: Note = {
         title: input!,
         content: "",
-        path: `${currentNode}\\${input}.md`,
+        path: `${extractFolderPath(currentNode!)}\\${input}.md`,
       };
 
       const noteItem: NoteItem = {

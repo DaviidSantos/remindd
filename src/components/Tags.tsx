@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from "react";
 import Action from "./Action";
 import { createTag } from "../lib/utils";
 import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
+import { NoteItem } from "../lib/types";
 
 interface TagsProps {
   setViewType: (viewType: string) => void;
@@ -28,6 +29,29 @@ const Tags: FC<TagsProps> = ({ setViewType }) => {
         dir: BaseDirectory.Document,
       })
     );
+
+    const notes: NoteItem[] = JSON.parse(
+      await readTextFile("Remind\\.config\\notes.json", {
+        dir: BaseDirectory.Document,
+      })
+    );
+
+    let updatedNotes: NoteItem[] = [];
+
+    notes.forEach((note) => {
+      if (note.tags.some((tagItem) => tagItem === tag)) {
+        const noteTags = note?.tags.filter((tagItem) => tagItem !== tag);
+        note.tags = noteTags;
+      }
+
+      updatedNotes.push(note)
+    });
+
+    await writeTextFile(
+      "Remind\\.config\\notes.json",
+      JSON.stringify(updatedNotes),
+      { dir: BaseDirectory.Document }
+    )
 
     const updatedTags = tags.filter((tagItem) => tagItem !== tag);
     await writeTextFile(
