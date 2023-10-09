@@ -85,7 +85,7 @@ const Cards = () => {
         onClose={() => setShouldShow(false)}
       >
         <div className="px-4 py-4 flex flex-col gap-4">
-          <p className="text-xs">Nome do cartão</p>
+          <p className="text-xs">Nome da coleção</p>
           <form className="flex flex-col gap-4" onSubmit={createCard}>
             <div className="relative">
               <input

@@ -1,25 +1,28 @@
 import { FC, Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { BsChevronExpand } from "react-icons/bs";
+import { Card } from "../lib/types";
 
 interface SelectOptions {
-  options: string[];
-  action: (item: string) => Promise<void>;
+  options: Card[];
+  currentCard: Card;
+  action: (item: Card) => Promise<void>;
 }
 
-const Select: FC<SelectOptions> = ({ options, action }) => {
-  const [selected, setSelected] = useState(options[0]);
+const SelectCards: FC<SelectOptions> = ({ options, action, currentCard }) => {
+  const [selected, setSelected] = useState(currentCard);
 
-  const onItemChange = (item: string) => {
+  const onItemChange = (item: Card) => {
     action(item);
+    setSelected(item)
   };
 
   return (
-    <Listbox value={selected} onChange={onItemChange}>
+    <Listbox value={selected} onChange={(card) => onItemChange(card)}>
       <div className="relative my-2">
         <Listbox.Button className="relative w-full cursor-default rounded-lg bg-zinc-900 border border-zinc-800 py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
           <span className="block truncate text-zinc-200 text-xs">
-            {selected}
+            {selected.name}
           </span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <BsChevronExpand
@@ -36,17 +39,13 @@ const Select: FC<SelectOptions> = ({ options, action }) => {
         >
           <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-zinc-900 border border-zinc-800 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {options.map((option, optionIndx) => (
-              <>
-                {option !== options[0] && (
-                  <Listbox.Option
-                    key={optionIndx}
-                    className="relative cursor-default select-none p-2 text-zinc-200 hover:bg-zinc-700"
-                    value={option}
-                  >
-                    <span className="text-xs">{option}</span>
-                  </Listbox.Option>
-                )}
-              </>
+              <Listbox.Option
+                key={optionIndx}
+                className="relative cursor-default select-none p-2 text-zinc-200 hover:bg-zinc-700"
+                value={option}
+              >
+                <span className="text-xs">{option.name}</span>
+              </Listbox.Option>
             ))}
           </Listbox.Options>
         </Transition>
@@ -55,4 +54,4 @@ const Select: FC<SelectOptions> = ({ options, action }) => {
   );
 };
 
-export default Select;
+export default SelectCards;
