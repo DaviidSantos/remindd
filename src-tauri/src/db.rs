@@ -1,5 +1,18 @@
 use rusqlite::{Connection, Result, named_params};
 
+use serde::Serialize;
+
+#[derive(Serialize)]
+pub struct Note {
+    id: i32,
+    path: String,
+    due_date: String,
+    interval: i32,
+    repetition: i32,
+    efactor: f32,
+    card_id: Option<i32>
+}
+
 pub fn create_database() -> Result<()> {
     let documents_directory = tauri::api::path::document_dir().unwrap_or_default();
     let db = documents_directory.join("Remind/.config/data.db").into_os_string().into_string().unwrap();
@@ -39,14 +52,18 @@ pub fn insert_note(path: &str, interval: i32, repetition: i32, efactor: f32, due
     Ok(())
 }
 
-pub fn get_all(db: &Connection) -> Result<Vec<String>, rusqlite::Error> {
-    let mut statement = db.prepare("SELECT * FROM items")?;
+pub fn get_all() -> Result<Vec<Note>> {
+    let documents_directory = tauri::api::path::document_dir().unwrap_or_default();
+    let db = documents_directory.join("Remind/.config/data.db").into_os_string().into_string().unwrap();
+    let conn = Connection::open(db)?;
+
+    let mut statement = conn.prepare("SELECT * FROM notes")?;
     let mut rows = statement.query([])?;
-    let mut items = Vec::new();
+    let mut items: Vec<Note> = Vec::new();
     while let Some(row) = rows.next()? {
-      let title: String = row.get("title")?;
+      let note: Note = Note { id: row.get(0)?, path: row.get(1)?, due_date: row.get(2)?, interval: row.get(3)?, repetition: row.get(4)?, efactor: row.get(5)?, card_id: row.get(6)? };
   
-      items.push(title);
+      items.push(note);
     }
   
     Ok(items)

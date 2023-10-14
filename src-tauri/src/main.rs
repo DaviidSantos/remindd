@@ -3,6 +3,7 @@
 
 mod file_tree;
 
+use db::Note;
 use dirs;
 mod db;
 use file_tree::*;
@@ -13,10 +14,10 @@ use tauri::{ Manager };
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![read_file_tree, add_note])
+        .invoke_handler(tauri::generate_handler![read_file_tree, add_note, select_all_notes])
         .setup(|app| {
             create_folders_if_not_exist();
-            db::create_database();
+            let _ = db::create_database();
             let window = app.get_window("main").unwrap();
 
             #[cfg(target_os = "macos")]
@@ -35,7 +36,13 @@ fn main() {
 
 #[tauri::command]
 fn add_note(path: &str, interval: i32, repetition: i32, efactor: f32, dueDate: &str) {
-    db::insert_note(path, interval, repetition, efactor, dueDate);
+    let _ = db::insert_note(path, interval, repetition, efactor, dueDate);
+}
+
+#[tauri::command]
+fn select_all_notes() -> Vec<Note> {
+    let notes = db::get_all().unwrap();
+    notes
 }
 
 #[tauri::command]
