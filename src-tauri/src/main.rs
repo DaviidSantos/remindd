@@ -10,11 +10,11 @@ use file_tree::*;
 use std::fs::{self};
 use window_vibrancy::{apply_blur, apply_vibrancy, NSVisualEffectMaterial};
 
-use tauri::{ Manager };
+use tauri::Manager;
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![read_file_tree, add_note, select_all_notes])
+        .invoke_handler(tauri::generate_handler![read_file_tree, add_note, select_all_notes, update_note_path])
         .setup(|app| {
             create_folders_if_not_exist();
             let _ = db::create_database();
@@ -43,6 +43,11 @@ fn add_note(path: &str, interval: i32, repetition: i32, efactor: f32, dueDate: &
 fn select_all_notes() -> Vec<Note> {
     let notes = db::get_all().unwrap();
     notes
+}
+
+#[tauri::command]
+fn update_note_path(path: &str, newPath: &str) {
+    let _ = db::update_note_path(path, newPath);
 }
 
 #[tauri::command]

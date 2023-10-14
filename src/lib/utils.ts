@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api";
 import {
   writeTextFile,
   BaseDirectory,
@@ -133,7 +134,8 @@ export const renameNote = async (
   await renameFile(`${getPath(currentNode!)}`, `${path}`, {
     dir: BaseDirectory.Document,
   })
-    .then(() => {
+    .then(async () => {
+      await invoke("update_note_path", {path: currentNode, newPath: `${folderPath}\\${title}.md`});
       setIsOpen(false);
 
       setIsError(false);
