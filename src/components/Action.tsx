@@ -6,6 +6,7 @@ import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
 import { NoteItem } from "../lib/types";
 import dayjs from "dayjs";
 import { extractFolderPath } from "../lib/utils";
+import { invoke } from "@tauri-apps/api";
 
 interface ActionProps {
   icon: IconType;
@@ -68,28 +69,15 @@ const Action: FC<ActionProps> = ({
         path: `${extractFolderPath(currentNode!)}\\${input}.md`,
       };
 
-      const noteItem: NoteItem = {
+      await invoke("add_note", {
+        path: note.path,
         interval: 0,
         repetition: 0,
         efactor: 2.5,
-        due_date: dayjs(Date.now() + 3600 * 1000 * 24).toISOString(),
-        path: note.path,
-        references: [],
-        tags: [],
-      };
-
-      const noteItems: NoteItem[] = JSON.parse(
-        await readTextFile("Remind\\.config\\notes.json", {
-          dir: BaseDirectory.Document,
-        })
-      );
-
-      noteItems.push(noteItem);
-      await writeTextFile(
-        "Remind\\.config\\notes.json",
-        JSON.stringify(noteItems),
-        { dir: BaseDirectory.Document }
-      );
+        dueDate: dayjs(Date.now() + 3600 * 1000 * 24)
+          .toISOString()
+          .substring(0, 10),
+      });
 
       const updatedNotes = [...notes, note];
       setNotes(updatedNotes);
