@@ -8,6 +8,7 @@ import {
   readTextFile,
   renameFile,
 } from "@tauri-apps/api/fs";
+import { Note } from "./types";
 
 export const getNodeName = (filePath: string) => {
   if (!filePath) {
@@ -79,6 +80,9 @@ export const createFolder = async (
 };
 
 export const deleteFile = async (path?: string) => {
+  const file_db = await invoke<Note>("select_note", {path})
+  await invoke("delete_note", { id: file_db.id})
+
   await removeFile(getPath(path!), {
     dir: BaseDirectory.Document,
   });

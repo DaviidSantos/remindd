@@ -220,6 +220,20 @@ pub fn update_note_card(path: &str, card_id: i32) -> Result<()> {
     Ok(())
 }
 
+pub fn revisao(path: &str, interval: i32, repetition: i32, efactor: f32, due_date: &str) -> Result<()> {
+    let documents_directory = tauri::api::path::document_dir().unwrap_or_default();
+    let db = documents_directory
+        .join("Remind/.config/data.db")
+        .into_os_string()
+        .into_string()
+        .unwrap();
+    let conn = Connection::open(db)?;
+    let mut statement = conn.prepare("UPDATE notes SET interval = @interval, repetition = @repetition, efactor = @efactor, due_date = @due_date WHERE path = @path")?;
+    statement.execute(named_params! { "@path": path, "@interval": interval, "@repetition": repetition, "@efactor": efactor, "@due_date": due_date})?;
+
+    Ok(())
+}
+
 pub fn get_all_tags() -> Result<Vec<Tag>> {
     let documents_directory = tauri::api::path::document_dir().unwrap_or_default();
     let db = documents_directory
@@ -263,6 +277,35 @@ pub fn get_note_tags(id: i32) -> Result<Vec<Tag>> {
         };
 
         items.push(tag);
+    }
+
+    Ok(items)
+}
+
+pub fn get_card_notes(card_id: i32) -> Result<Vec<Note>> {
+    let documents_directory = tauri::api::path::document_dir().unwrap_or_default();
+    let db = documents_directory
+        .join("Remind/.config/data.db")
+        .into_os_string()
+        .into_string()
+        .unwrap();
+    let conn = Connection::open(db)?;
+
+    let mut statement = conn.prepare("SELECT * FROM notes WHERE card_id = ? AND due_date = Date('now');")?;
+    let mut rows = statement.query(&[&card_id])?;
+    let mut items: Vec<Note> = Vec::new();
+    while let Some(row) = rows.next()? {
+        let note: Note = Note {
+            id: row.get(0)?,
+            path: row.get(1)?,
+            due_date: row.get(2)?,
+            interval: row.get(3)?,
+            repetition: row.get(4)?,
+            efactor: row.get(5)?,
+            card_id: row.get(6)?,
+        };
+
+        items.push(note);
     }
 
     Ok(items)
@@ -337,6 +380,26 @@ pub fn delete_note_tag(note_id: i32, tag_id: i32) -> Result<()> {
     let conn = Connection::open(db)?;
     let mut statement = conn.prepare("DELETE FROM note_tags WHERE tag_id = @tag_id AND note_id = @note_id;")?;
     statement.execute(named_params! { "@note_id": note_id, "@tag_id": tag_id})?;
+
+    Ok(())
+}
+
+pub fn delete_note(id: i32) -> Result<()> {
+    let documents_directory = tauri::api::path::document_dir().unwrap_or_default();
+    let db = documents_directory
+        .join("Remind/.config/data.db")
+        .into_os_string()
+        .into_string()
+        .unwrap();
+    let conn = Connection::open(db)?;
+    let mut statement = conn.prepare("DELETE FROM note_tags WHERE note_id = @id;")?;
+    statement.execute(named_params! { "@id": id})?;
+
+    let mut statement = conn.prepare("DELETE FROM note_references WHERE note_id = @id;")?;
+    statement.execute(named_params! { "@id": id})?;
+
+    let mut statement = conn.prepare("DELETE FROM notes WHERE id = @id;")?;
+    statement.execute(named_params! { "@id": id})?;
 
     Ok(())
 }

@@ -29,7 +29,10 @@ fn main() {
             delete_tag,
             add_note_tag,
             get_note_tags,
-            delete_note_tag
+            delete_note_tag,
+            delete_note,
+            get_card_notes,
+            revisao
         ])
         .setup(|app| {
             create_folders_if_not_exist();
@@ -94,6 +97,11 @@ fn update_note_path(path: &str, newPath: &str) {
 }
 
 #[tauri::command]
+fn revisao(path: &str, interval: i32, repetition: i32, efactor: f32, dueDate: &str) {
+    let _ = db::revisao(path, interval, repetition, efactor, dueDate);
+}
+
+#[tauri::command]
 fn update_note_card(path: &str, cardId: i32) {
     let _ = db::update_note_card(path, cardId);
 }
@@ -111,6 +119,12 @@ fn select_all_tags() -> Vec<Tag> {
 }
 
 #[tauri::command]
+fn get_card_notes(cardId: i32) -> Vec<Note> {
+    let notes = db::get_card_notes(cardId).unwrap();
+    notes
+}
+
+#[tauri::command]
 fn get_note_tags(id: i32) -> Vec<Tag> {
     let tags = db::get_note_tags(id).unwrap();
     tags
@@ -119,6 +133,11 @@ fn get_note_tags(id: i32) -> Vec<Tag> {
 #[tauri::command]
 fn delete_tag(id: i32) {
     let _ = db::delete_tag(id);
+}
+
+#[tauri::command]
+fn delete_note(id: i32) {
+    let _ = db::delete_note(id);
 }
 
 #[tauri::command]

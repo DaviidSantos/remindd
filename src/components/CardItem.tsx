@@ -1,32 +1,18 @@
 import { FC, useEffect, useState } from "react";
-import { Card, NoteItem } from "../lib/types";
-import { readTextFile, BaseDirectory } from "@tauri-apps/api/fs";
+import { Card, Note } from "../lib/types";
+import { invoke } from "@tauri-apps/api";
+import { Link } from "react-router-dom";
 
 interface CardItemProps {
   card: Card;
 }
 
 const CardItem: FC<CardItemProps> = ({ card }) => {
-  const [noteItems, setNoteItems] = useState<NoteItem[]>([]);
+  const [noteItems, setNoteItems] = useState<Note[]>([]);
 
   const loadNotes = async () => {
-    const notes: NoteItem[] = [];
-
-    const noteItems: NoteItem[] = JSON.parse(
-      await readTextFile("Remind\\.config\\notes.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
-
-    card.notes.forEach((note) => {
-      const noteItem = noteItems.find((noteItem) => noteItem.path === note);
-
-      if (noteItem) {
-        notes.push(noteItem);
-      }
-    });
-
-    setNoteItems(notes);
+    const notes = await invoke<Note[]>("get_card_notes", { cardId: card.id });
+    setNoteItems(notes)
   };
 
   useEffect(() => {
@@ -56,9 +42,9 @@ const CardItem: FC<CardItemProps> = ({ card }) => {
           </span>
         </div>
 
-        <button className="w-full px-4 py-1.5 text-xs text-zinc-900 bg-zinc-50 rounded-md font-medium hover:bg-zinc-900 hover:text-zinc-50 border border-zinc-800 hover:border-zinc-800 z-50 mt-3">
+        <Link to={`/revisao/${card.id}`} className="w-full block text-center px-4 py-1.5 text-xs text-zinc-900 bg-zinc-50 rounded-md font-medium hover:bg-zinc-900 hover:text-zinc-50 border border-zinc-800 hover:border-zinc-800 z-50 mt-3">
           Revisar
-        </button>
+        </Link>
       </div>
     </div>
   );

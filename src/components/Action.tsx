@@ -74,7 +74,7 @@ const Action: FC<ActionProps> = ({
         interval: 0,
         repetition: 0,
         efactor: 2.5,
-        dueDate: dayjs(Date.now() + 3600 * 1000 * 24)
+        dueDate: dayjs(Date.now())
           .toISOString()
           .substring(0, 10),
       });
