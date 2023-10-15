@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Card } from "../lib/types";
 import Modal from "../components/Modal";
-import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
 import CardItem from "../components/CardItem";
+import { invoke } from "@tauri-apps/api";
 
 const Cards = () => {
   const [cards, setCards] = useState<Card[]>();
@@ -11,46 +11,22 @@ const Cards = () => {
   const [shouldShow, setShouldShow] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      const cards: Card[] = JSON.parse(
-        await readTextFile("Remind\\.config\\cards.json", {
-          dir: BaseDirectory.Document,
-        })
-      );
-
-      setCards(cards);
-    })();
+    loadCards();
   }, []);
+
+  const loadCards = async () => {
+    const cards: Card[] = await invoke<Card[]>("select_all_cards");
+    setCards(cards);
+  };
 
   const createCard = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const cards: Card[] = JSON.parse(
-      await readTextFile("Remind\\.config\\cards.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
+    await invoke("add_card", { name: cardName }).catch((e) => {
+      setError("Coleção já existe!");
+    });
 
-    if (cards.some((card) => card.name === cardName)) {
-      setError("Cartão já existe!");
-    } else {
-      const newCard: Card = {
-        name: cardName,
-        notes: [],
-      };
-
-      cards.push(newCard);
-
-      await writeTextFile(
-        "Remind\\.config\\cards.json",
-        JSON.stringify(cards),
-        {
-          dir: BaseDirectory.Document,
-        }
-      );
-
-      setCards(cards);
-      setShouldShow(false);
-    }
+    loadCards();
+    setShouldShow(false);
   };
 
   return (
@@ -75,7 +51,7 @@ const Cards = () => {
 
       <div className="my-10 grid grid-cols-5 gap-6">
         {cards?.map((card) => (
-          <CardItem card={card}/>
+          <CardItem card={card} />
         ))}
       </div>
 

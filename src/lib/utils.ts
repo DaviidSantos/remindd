@@ -96,31 +96,9 @@ export const createTag = async (
   setIsError: (isError: boolean) => void,
   name: string | undefined
 ) => {
-  try {
-    const tags: string[] = JSON.parse(
-      await readTextFile("Remind\\.config\\tags.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
-
-    if (tags.some((tag) => tag === name)) {
-      throw new Error();
-    }
-
-    tags.push(name!);
-
-    await writeTextFile("Remind\\.config\\tags.json", JSON.stringify(tags), {
-      dir: BaseDirectory.Document,
-    })
-      .then(() => {
-        setIsOpen(false);
-      })
-      .catch(() => {
-        setIsError(true);
-      });
-  } catch (e) {
-    setIsError(true);
-  }
+  await invoke("add_tag", { name })
+    .then(() => setIsOpen(false))
+    .catch(() => setIsError(true));
 };
 
 export const renameNote = async (
@@ -135,7 +113,10 @@ export const renameNote = async (
     dir: BaseDirectory.Document,
   })
     .then(async () => {
-      await invoke("update_note_path", {path: currentNode, newPath: `${folderPath}\\${title}.md`});
+      await invoke("update_note_path", {
+        path: currentNode,
+        newPath: `${folderPath}\\${title}.md`,
+      });
       setIsOpen(false);
 
       setIsError(false);

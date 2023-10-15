@@ -8,6 +8,21 @@ export interface NoteItem extends SuperMemoItem {
 }
 
 export interface Card {
+  id: number;
   name: string;
-  notes: string[];
+}
+
+export interface Note {
+  id: number;
+  path: string;
+  due_date: string;
+  interval: number;
+  repetition: number;
+  efactor: number;
+  card_id?: number;
+}
+
+export interface Tag {
+  id: number;
+  name: string
 }

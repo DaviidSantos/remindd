@@ -3,64 +3,23 @@ import { AiOutlineLeft } from "react-icons/ai";
 import { FC, useEffect, useState } from "react";
 import Action from "./Action";
 import { createTag } from "../lib/utils";
-import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
-import { NoteItem } from "../lib/types";
+import { Tag } from "../lib/types";
+import { invoke } from "@tauri-apps/api";
 
 interface TagsProps {
   setViewType: (viewType: string) => void;
 }
 
 const Tags: FC<TagsProps> = ({ setViewType }) => {
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
 
   const readTags = async () => {
-    const tags: string[] = JSON.parse(
-      await readTextFile("Remind\\.config\\tags.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
-
+    const tags: Tag[] = await invoke<Tag[]>("select_all_tags");
     setTags(tags);
   };
 
-  const deleteTag = async (tag: string) => {
-    const tags: string[] = JSON.parse(
-      await readTextFile("Remind\\.config\\tags.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
-
-    const notes: NoteItem[] = JSON.parse(
-      await readTextFile("Remind\\.config\\notes.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
-
-    let updatedNotes: NoteItem[] = [];
-
-    notes.forEach((note) => {
-      if (note.tags.some((tagItem) => tagItem === tag)) {
-        const noteTags = note?.tags.filter((tagItem) => tagItem !== tag);
-        note.tags = noteTags;
-      }
-
-      updatedNotes.push(note)
-    });
-
-    await writeTextFile(
-      "Remind\\.config\\notes.json",
-      JSON.stringify(updatedNotes),
-      { dir: BaseDirectory.Document }
-    )
-
-    const updatedTags = tags.filter((tagItem) => tagItem !== tag);
-    await writeTextFile(
-      "Remind\\.config\\tags.json",
-      JSON.stringify(updatedTags),
-      {
-        dir: BaseDirectory.Document,
-      }
-    ).then(() => setTags(updatedTags));
+  const deleteTag = async (id: number) => {
+    await invoke("delete_tag", { id });
   };
 
   useEffect(() => {
@@ -92,8 +51,8 @@ const Tags: FC<TagsProps> = ({ setViewType }) => {
       <ul className="flex flex-col gap-3 px-2 my-4">
         {tags.map((tag) => (
           <li className="text-sm text-zinc-300 p-1 rounded-md hover:bg-zinc-800/75 flex items-center justify-between">
-            <span>{tag}</span>
-            <button onClick={() => deleteTag(tag)}>
+            <span>{tag.name}</span>
+            <button onClick={() => deleteTag(tag.id)}>
               <BsX className="text-zinc-200 h-4" />
             </button>
           </li>

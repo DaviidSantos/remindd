@@ -2,157 +2,66 @@ import { Popover } from "@headlessui/react";
 import { FC, useEffect, useState } from "react";
 import { PiTagSimpleLight } from "react-icons/pi";
 import { MdOutlineCollectionsBookmark } from "react-icons/md";
-import { Card, NoteItem } from "../lib/types";
+import { Card, Note, NoteItem, Tag } from "../lib/types";
 import { readTextFile, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
 import SelectTags from "./SelectTags";
 import { BsX } from "react-icons/bs";
 import SelectCards from "./SelectCards";
-import CardItem from "./CardItem";
+import { invoke } from "@tauri-apps/api";
 
 interface NoteOptionsProps {
   path: string;
 }
 
 const NoteOptions: FC<NoteOptionsProps> = ({ path }) => {
-  const [note, setNote] = useState<NoteItem>();
+  const [note, setNote] = useState<Note>();
   const [cards, setCards] = useState<Card[]>([
-    { name: "Selecionar coleção...", notes: [] },
+    { id: 0, name: "Selecionar coleção..." },
   ]);
-  const [currentCard, setCurrentCard] = useState<Card>({
-    name: "Selecionar coleção...",
-    notes: [],
-  });
-  const [tags, setTags] = useState<string[]>(["Adicionar tag"]);
+  const [currentCard, setCurrentCard] = useState<Card>();
+  const [noteTags, setNoteTags] = useState<Tag[]>([]);
+  const [tags, setTags] = useState<Tag[]>([{ id: 0, name: "Adicionar tag" }]);
 
   const loadNote = async () => {
-    const noteItems: NoteItem[] = JSON.parse(
-      await readTextFile("Remind\\.config\\notes.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
+    const note: Note = await invoke<Note>("select_note", { path });
 
-    const note = noteItems.find((noteItem) => noteItem.path === path);
+    if (note.card_id) {
+      const card = await invoke<Card>("select_card", { id: note.card_id });
+      setCurrentCard(card);
+    } else {
+      setCurrentCard({ id: 0, name: "Selecionar coleção..." });
+    }
+
+    const noteTags = await invoke<Tag[]>("get_note_tags", { id: note.id });
+    setNoteTags(noteTags);
     setNote(note);
   };
 
   const loadCards = async () => {
-    const loadCards: Card[] = JSON.parse(
-      await readTextFile("Remind\\.config\\cards.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
-
-    loadCards.forEach((card) => {
-      if (card.notes.some((noteItem) => noteItem === path)) {
-        setCurrentCard(card);
-      }
-    });
-
-    setCards([...cards, ...loadCards]);
+    const cards_db: Card[] = await invoke<Card[]>("select_all_cards");
+    setCards([...cards, ...cards_db]);
   };
 
   const loadTags = async () => {
-    const tagItems: string[] = JSON.parse(
-      await readTextFile("Remind\\.config\\tags.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
-
-    setTags([...tags, ...tagItems]);
+    const tags_db: Tag[] = await invoke<Tag[]>("select_all_tags");
+    setTags([...tags, ...tags_db]);
   };
 
-  const addTag = async (tag: string) => {
-    const notes: NoteItem[] = JSON.parse(
-      await readTextFile("Remind\\.config\\notes.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
-
-    const extractedNotes = notes.filter(
-      (noteItem) => noteItem.path !== note?.path
-    );
-
-    const updatedNote = notes.find((noteItem) => noteItem.path === path);
-    if (!updatedNote?.tags.some((tagItem) => tagItem === tag)) {
-      updatedNote?.tags.push(tag);
-    }
-
-    const updatedNotes = [...extractedNotes, updatedNote];
-    setNote(note);
-    await writeTextFile(
-      "Remind\\.config\\notes.json",
-      JSON.stringify(updatedNotes),
-      { dir: BaseDirectory.Document }
-    ).then(() => {
-      setNote(updatedNote);
-    });
+  const addTag = async (tag: Tag) => {
+    await invoke("add_note_tag", { noteId: note?.id, tagId: tag.id });
+    const noteTags = await invoke<Tag[]>("get_note_tags", { id: note?.id });
+    setNoteTags(noteTags);
   };
 
   const changeCard = async (card: Card) => {
-    const cards: Card[] = JSON.parse(
-      await readTextFile("Remind\\.config\\cards.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
-
-    card.notes.push(path);
-
-    let extractedCards = cards;
-
-    if (currentCard.notes.some((noteItem) => noteItem === path)) {
-      extractedCards = cards.filter(
-        (CardItem) => CardItem.name !== currentCard.name
-      );
-      const oldCard = cards.find(
-        (cardItem) => cardItem.name === currentCard.name
-      )!;
-      const notes = oldCard.notes.filter((notePath) => notePath !== path);
-      oldCard.notes = notes;
-
-      const updatedCards = [...extractedCards, oldCard];
-
-      await writeTextFile(
-        "Remind\\.config\\cards.json",
-        JSON.stringify(updatedCards),
-        { dir: BaseDirectory.Document }
-      );
-    }
-
-    extractedCards = cards.filter((cardItem) => cardItem.name !== card.name);
-
-    const updatedCards = [...extractedCards, card];
-
-    await writeTextFile(
-      "Remind\\.config\\cards.json",
-      JSON.stringify(updatedCards),
-      { dir: BaseDirectory.Document }
-    );
+    await invoke("update_note_card", { path, cardId: card.id });
+    setCurrentCard(card);
   };
 
-  const removeTag = async (tag: string) => {
-    const notes: NoteItem[] = JSON.parse(
-      await readTextFile("Remind\\.config\\notes.json", {
-        dir: BaseDirectory.Document,
-      })
-    );
-
-    const extractedNotes = notes.filter(
-      (noteItem) => noteItem.path !== note?.path
-    );
-
-    const selectedNote = notes.find((noteItem) => noteItem.path === path)!;
-    const tags = selectedNote?.tags.filter((tagItem) => tagItem !== tag);
-    selectedNote.tags = tags;
-
-    const updatedNotes = [...extractedNotes, selectedNote];
-
-    await writeTextFile(
-      "Remind\\.config\\notes.json",
-      JSON.stringify(updatedNotes),
-      { dir: BaseDirectory.Document }
-    ).then(() => {
-      setNote(selectedNote);
-    });
+  const removeTag = async (id: number) => {
+    await invoke("delete_note_tag", { noteId: note?.id, tagId: id });
+    const updatedTags = noteTags.filter((tag) => tag.id !== id);
+    setNoteTags(updatedTags);
   };
 
   useEffect(() => {
@@ -173,10 +82,10 @@ const NoteOptions: FC<NoteOptionsProps> = ({ path }) => {
 
         <Popover.Panel className="absolute z-10 bg-zinc-900 border border-zinc-800 rounded-md shadow px-4 py-2 mt-2">
           <SelectTags options={tags} action={addTag} />
-          {note?.tags.map((tag) => (
+          {noteTags.map((tag) => (
             <div className="flex items-center justify-between hover:bg-zinc-700 p-1 rounded">
-              <p className="text-zinc-200 text-xs my-1">{tag}</p>
-              <button onClick={() => removeTag(tag)}>
+              <p className="text-zinc-200 text-xs my-1">{tag.name}</p>
+              <button onClick={() => removeTag(tag.id)}>
                 <BsX className="text-zinc-200 h-4" />
               </button>
             </div>
@@ -198,10 +107,10 @@ const NoteOptions: FC<NoteOptionsProps> = ({ path }) => {
             action={changeCard}
             currentCard={currentCard!}
           />
-          {note?.tags.map((tag) => (
+          {noteTags.map((tag) => (
             <div className="flex items-center justify-between hover:bg-zinc-700 p-1 rounded">
-              <p className="text-zinc-200 text-xs my-1">{tag}</p>
-              <button onClick={() => removeTag(tag)}>
+              <p className="text-zinc-200 text-xs my-1">{tag.name}</p>
+              <button onClick={() => removeTag(tag.id)}>
                 <BsX className="text-zinc-200 h-4" />
               </button>
             </div>

@@ -3,7 +3,7 @@
 
 mod file_tree;
 
-use db::Note;
+use db::{Card, Note, Tag};
 use dirs;
 mod db;
 use file_tree::*;
@@ -14,7 +14,23 @@ use tauri::Manager;
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![read_file_tree, add_note, select_all_notes, update_note_path])
+        .invoke_handler(tauri::generate_handler![
+            read_file_tree,
+            add_note,
+            select_all_notes,
+            update_note_path,
+            select_note,
+            select_all_cards,
+            select_all_tags,
+            update_note_card,
+            add_card,
+            add_tag,
+            select_card,
+            delete_tag,
+            add_note_tag,
+            get_note_tags,
+            delete_note_tag
+        ])
         .setup(|app| {
             create_folders_if_not_exist();
             let _ = db::create_database();
@@ -40,14 +56,74 @@ fn add_note(path: &str, interval: i32, repetition: i32, efactor: f32, dueDate: &
 }
 
 #[tauri::command]
+fn add_card(name: &str) {
+    let _ = db::insert_card(name);
+}
+
+#[tauri::command]
+fn add_tag(name: &str) {
+    let _ = db::insert_tag(name);
+}
+
+#[tauri::command]
+fn add_note_tag(noteId: i32, tagId: i32) {
+    let _ = db::add_note_tag(noteId, tagId);
+}
+
+#[tauri::command]
 fn select_all_notes() -> Vec<Note> {
-    let notes = db::get_all().unwrap();
+    let notes = db::get_all_notes().unwrap();
     notes
+}
+
+#[tauri::command]
+fn select_note(path: &str) -> Note {
+    let note = db::select_note(path).unwrap();
+    note
+}
+
+#[tauri::command]
+fn select_card(id: i32) -> Card {
+    let card = db::select_card(id).unwrap();
+    card
 }
 
 #[tauri::command]
 fn update_note_path(path: &str, newPath: &str) {
     let _ = db::update_note_path(path, newPath);
+}
+
+#[tauri::command]
+fn update_note_card(path: &str, cardId: i32) {
+    let _ = db::update_note_card(path, cardId);
+}
+
+#[tauri::command]
+fn select_all_cards() -> Vec<Card> {
+    let cards = db::get_all_cards().unwrap();
+    cards
+}
+
+#[tauri::command]
+fn select_all_tags() -> Vec<Tag> {
+    let tags = db::get_all_tags().unwrap();
+    tags
+}
+
+#[tauri::command]
+fn get_note_tags(id: i32) -> Vec<Tag> {
+    let tags = db::get_note_tags(id).unwrap();
+    tags
+}
+
+#[tauri::command]
+fn delete_tag(id: i32) {
+    let _ = db::delete_tag(id);
+}
+
+#[tauri::command]
+fn delete_note_tag(noteId: i32, tagId: i32) {
+    let _ = db::delete_note_tag(noteId, tagId);
 }
 
 #[tauri::command]
